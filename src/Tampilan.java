@@ -106,9 +106,12 @@ public class Tampilan {
         HAPUSButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 int selectedRow = table1.getSelectedRow();
                 if (selectedRow != -1) {
                     // Hapus baris yang dipilih
+                    String[] lastAction = UNDOStack.pop();
+                    UNDOStack.push(lastAction);
                     tableModel.removeRow(selectedRow);
                 } else {
                     JOptionPane.showMessageDialog(null, "Pilih baris yang ingin dihapus", "PERINGATAN!!!", JOptionPane.WARNING_MESSAGE);
@@ -140,6 +143,14 @@ public class Tampilan {
                     if (rowCount > 0) {
                         tableModel.removeRow(rowCount - 1);
                     }
+                }
+                else if (!REDOStack.isEmpty()) {
+                    // Ambil data yang di-redo dan tambahkan ke tabel
+                    String[] lastAction = REDOStack.pop();
+                    tableModel.addRow(lastAction);  // Tambahkan baris yang di-redo
+
+                    // Simpan untuk undo
+                    UNDOStack.push(lastAction);
                 }
             }
         });
